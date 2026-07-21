@@ -1,0 +1,71 @@
+/* AI Translate 译文样式：追加在原段落内，块级另起一行，虚线下划线示意为译文 */
+.ait-translation {
+  display: block;
+  margin-top: 6px;
+  opacity: 0.92;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: rgba(59, 130, 246, 0.55);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.ait-failed {
+  color: #dc2626;
+  cursor: pointer;
+}
+
+.ait-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647;
+  max-width: min(420px, calc(100vw - 40px));
+  box-sizing: border-box;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(24, 24, 27, 0.94);
+  color: #fff;
+  font: 500 14px/1.4 system-ui, sans-serif;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.24);
+  pointer-events: none;
+}
+
+.ait-toast[hidden] {
+  display: none;
+}
+
+.ait-input-toast {
+  bottom: 70px;
+}
+
+.ait-select-btn {
+  position: absolute;
+  z-index: 2147483647;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  text-align: center;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  font: 600 13px/26px system-ui, sans-serif;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.ait-select-card {
+  position: absolute;
+  z-index: 2147483647;
+  max-width: 360px;
+  background: #fff;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: 14px/1.6 system-ui, sans-serif;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  white-space: pre-wrap;
+}

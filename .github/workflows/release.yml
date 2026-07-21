@@ -1,0 +1,39 @@
+name: Build & Release Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  package-and-release:
+    name: Package & Release Zip
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Package Extension Zip
+        run: |
+          zip -r ai-translate.zip . -x "*.git*" ".github/*" "tmp/*" "tests/*" "*.DS_Store"
+
+      - name: Upload Workflow Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-translate-extension
+          path: ai-translate.zip
+
+      - name: Attach Zip to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ai-translate.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "AI Translate",
+  "version": "0.4.1",
+  "description": "AI 网页双语、划词与输入框翻译",
+  "author": "heycqing",
+  "homepage_url": "https://github.com/heycqing/ai-translate",
+  "icons": {
+    "16": "assets/icons/icon-v2-16.png",
+    "32": "assets/icons/icon-v2-32.png",
+    "48": "assets/icons/icon-v2-48.png",
+    "128": "assets/icons/icon-v2-128.png"
+  },
+  "permissions": ["storage", "activeTab", "contextMenus", "nativeMessaging", "clipboardWrite"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "lib/batcher.js",
+        "lib/collect-rules.js",
+        "lib/editable.js",
+        "content/select-translate.js",
+        "content/input-translate.js",
+        "content/collector.js",
+        "content/page-translate.js"
+      ],
+      "css": ["content/styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options/options.html",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon-v2-16.png",
+      "32": "assets/icons/icon-v2-32.png"
+    }
+  },
+  "commands": {
+    "toggle-translate": {
+      "suggested_key": { "default": "Alt+A" },
+      "description": "翻译/还原当前页面"
+    },
+    "translate-input": {
+      "suggested_key": { "default": "Alt+T" },
+      "description": "翻译当前输入框"
+    }
+  }
+}

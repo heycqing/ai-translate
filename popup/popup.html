@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8">
+<style>
+  body { width: 220px; padding: 12px; font-family: system-ui, sans-serif; margin: 0; }
+  button { width: 100%; padding: 8px; margin-bottom: 8px; cursor: pointer; }
+  select { flex: 1; min-width: 0; padding: 6px; }
+  .provider-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  #providerTip { flex: none; color: #16a34a; font-size: 12px; white-space: nowrap; }
+  a { font-size: 12px; color: #2563eb; }
+</style>
+</head>
+<body>
+  <button id="translate">翻译此页（Alt+A）</button>
+  <button id="restore">还原原文</button>
+  <div class="provider-row">
+    <select id="provider"></select>
+    <span id="providerTip" aria-live="polite"></span>
+  </div>
+  <a href="#" id="openOptions">打开设置</a>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>AI Translate 设置</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 32px auto; padding: 0 16px; color: #222; }
+  fieldset { margin-bottom: 24px; border: 1px solid #ccc; border-radius: 8px; padding: 12px 16px; }
+  legend { font-weight: 600; }
+  label { display: block; margin: 10px 0 2px; font-size: 13px; color: #555; }
+  input, select, textarea { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { border-bottom: 1px solid #eee; padding: 6px; text-align: left; word-break: break-all; }
+  button { padding: 6px 14px; margin-top: 10px; cursor: pointer; }
+  button + button { margin-left: 6px; }
+  .row-actions button { margin: 0 4px 0 0; padding: 2px 8px; }
+  #saveTip { color: #16a34a; font-size: 13px; margin-left: 8px; }
+  .hint { color: #666; font-size: 12px; line-height: 1.6; }
+  .status { min-height: 20px; margin-top: 10px; font-size: 13px; }
+  .status.ok { color: #15803d; }
+  .status.error { color: #b91c1c; }
+  .inline { display: grid; grid-template-columns: 1fr 120px; gap: 12px; }
+  .cmd-block { margin-top: 10px; }
+  .cmd-textarea {
+    width: 100%; box-sizing: border-box; background: #1e1e2e; color: #d4d4d4;
+    font-family: ui-monospace, Consolas, 'Courier New', monospace; font-size: 12.5px;
+    line-height: 1.6; border: 1px solid #333; border-radius: 6px; padding: 12px;
+    white-space: pre; resize: vertical;
+  }
+  .footer {
+    margin-top: 32px;
+    padding: 16px 0;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 13px;
+    color: #6b7280;
+  }
+  .footer p { margin: 4px 0; }
+  .footer a { color: #2563eb; text-decoration: none; font-weight: 500; }
+  .footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <h1>AI Translate 设置</h1>
+
+  <fieldset>
+    <legend>通用</legend>
+    <label for="targetLang">目标语言（改动即保存）</label>
+    <select id="targetLang">
+      <option value="简体中文">简体中文</option>
+      <option value="English">English</option>
+      <option value="日本語">日本語</option>
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <legend>本地 Responses 代理</legend>
+    <p class="hint">首次使用请按你的系统点击对应按钮生成可编辑的安装命令，编辑项目路径后点击“复制全部”，再到终端中执行（Windows 用 PowerShell，macOS 用 Terminal）。安装后，登录会自动启动代理，也可在这里检测、启动或修改本地配置。</p>
+    <label for="extensionId">当前扩展 ID（安装 Native Host 时会绑定此 ID）</label>
+    <input id="extensionId" readonly>
+    <label for="localConfigPath">Codex 配置路径</label>
+    <input id="localConfigPath" placeholder="Windows 例：%USERPROFILE%\.codex\dycodex.config.toml　macOS 例：~/.codex/dycodex.config.toml">
+    <div class="inline">
+      <div>
+        <label for="localToken">本地代理令牌</label>
+        <input id="localToken" type="password" autocomplete="off" placeholder="仅用于扩展访问本机代理">
+      </div>
+      <div>
+        <label for="localPort">端口</label>
+        <input id="localPort" type="number" min="1" max="65535" value="8787">
+      </div>
+    </div>
+    <button type="button" id="installCommandWindows">生成 Windows 安装命令</button>
+    <button type="button" id="installCommandMacos">生成 macOS 安装命令</button>
+    <button type="button" id="startLocalProxy">保存并启动</button>
+    <button type="button" id="checkLocalProxy">检测状态</button>
+    <div id="installCommandBlock" class="cmd-block" hidden>
+      <textarea id="installCommandText" class="cmd-textarea" rows="7" spellcheck="false" aria-label="安装命令"></textarea>
+      <button type="button" id="copyInstallCommand">复制全部</button>
+    </div>
+    <div id="localStatus" class="status" aria-live="polite"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>翻译引擎（OpenAI 兼容接口）</legend>
+    <table id="providerTable"></table>
+
+    <form id="providerForm">
+      <input type="hidden" id="editingId">
+      <label for="pName">名称</label>
+      <input id="pName" required placeholder="例如 deepseek">
+      <label for="pBaseURL">接口地址 baseURL</label>
+      <input id="pBaseURL" required placeholder="https://api.deepseek.com/v1">
+      <label for="pKey">API Key</label>
+      <input id="pKey" type="password" required placeholder="sk-...">
+      <label for="pModel">模型</label>
+      <input id="pModel" required placeholder="deepseek-chat">
+      <label for="pPrompt">自定义系统提示词（可选，{targetLang} 会被替换成目标语言）</label>
+      <textarea id="pPrompt" rows="3" placeholder="留空用内置提示词"></textarea>
+      <button type="submit">保存引擎</button>
+      <button type="button" id="resetForm">清空表单</button>
+      <span id="saveTip"></span>
+    </form>
+  </fieldset>
+
+  <fieldset>
+    <legend>设置备份</legend>
+    <p class="hint">引擎设置保存在当前扩展 ID 对应的 <code>chrome.storage.local</code> 中。重新加载到不同目录、删除后重装或更换浏览器用户资料时，请先导出再导入。备份文件包含 API Key 和本地令牌，请妥善保管。</p>
+    <button type="button" id="exportSettings">导出设置 JSON</button>
+    <button type="button" id="importSettings">导入设置 JSON</button>
+    <input id="importFile" type="file" accept="application/json,.json" hidden>
+    <span id="backupTip" class="status" aria-live="polite"></span>
+  </fieldset>
+
+  <footer class="footer">
+    <p>AI Translate <span id="appVersion">v0.4.1</span> · Created by <strong>heycqing</strong></p>
+    <p>
+      <a href="https://blog.haiqing.uk/blog/" target="_blank" rel="noopener">个人博客</a>
+      <span> · </span>
+      <a href="https://github.com/heycqing/ai-translate" target="_blank" rel="noopener">GitHub 仓库</a>
+      <span> · </span>
+      <a href="https://github.com/heycqing" target="_blank" rel="noopener">GitHub 主页</a>
+    </p>
+  </footer>
+
+  <script src="../lib/settings.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

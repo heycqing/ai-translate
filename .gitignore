@@ -1,0 +1,14 @@
+# 本地模型、Provider 与代理配置（禁止提交）
+.env
+.env.*
+local-proxy/*.local.*
+local-proxy/*.config.*
+
+# 内部文档与临时目录（本地保留，不上传）
+docs/
+tmp/
+.agents/
+.DS_Store
+*.tmp
+
+

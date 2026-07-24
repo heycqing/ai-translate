@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="AI Translate 是一款轻量的 Chrome 双语网页翻译扩展，支持整页双语对照、划词翻译、输入框翻译和多翻译引擎。"
+    />
+    <meta name="theme-color" content="#17211f" />
+    <title>AI Translate｜网页还是原来的网页，只多一层你看得懂的语言</title>
+    <link rel="icon" href="./assets/icon-v2-32.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="AI Translate 首页">
+        <img src="./assets/icon-v2-32.png" width="28" height="28" alt="" />
+        <span>AI Translate</span>
+      </a>
+      <nav aria-label="主导航">
+        <a href="#how">怎么用</a>
+        <a href="#scenes">翻译场景</a>
+        <a href="#install">安装</a>
+      </nav>
+      <a
+        class="header-link"
+        href="https://github.com/heycqing/ai-translate"
+        target="_blank"
+        rel="noopener"
+      >
+        GitHub <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" data-od-id="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Chrome extension · v0.4.1</p>
+          <h1>AI<br />Translate</h1>
+          <p class="hero-line">网页还是原来的网页，<br />只多一层你看得懂的语言。</p>
+          <div class="hero-actions">
+            <a
+              class="primary-button"
+              href="https://github.com/heycqing/ai-translate"
+              target="_blank"
+              rel="noopener"
+            >
+              在 GitHub 获取 <span aria-hidden="true">↗</span>
+            </a>
+            <a class="plain-link" href="#how">看看它怎么工作</a>
+          </div>
+        </div>
+
+        <div class="reader-demo" aria-label="AI Translate 双语网页效果演示">
+          <div class="browser-bar">
+            <div class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="browser-address">notes.example.com / a-quiet-morning</div>
+            <span class="secure-state">已连接</span>
+          </div>
+
+          <div class="reader-toolbar">
+            <div>
+              <span class="reader-label">阅读模式</span>
+              <strong id="translate-status">双语对照已开启</strong>
+            </div>
+            <button
+              class="translate-toggle is-on"
+              id="translate-toggle"
+              type="button"
+              aria-pressed="true"
+            >
+              <span class="toggle-key">Alt+A</span>
+              <span class="toggle-label">还原原文</span>
+            </button>
+          </div>
+
+          <article class="article-sheet">
+            <div class="article-meta">
+              <span>FIELD NOTES / 04</span>
+              <span>6 MIN READ</span>
+            </div>
+            <h2>The city before<br />the city wakes</h2>
+            <div class="article-columns">
+              <div class="article-block">
+                <p class="source-text">
+                  At six in the morning, the streets belong to delivery riders,
+                  bakers, and people who prefer to begin before the noise.
+                </p>
+                <p class="translated-text">
+                  清晨六点，街道属于送货员、面包师，以及那些喜欢赶在喧嚣前出发的人。
+                </p>
+              </div>
+              <div class="article-block secondary-paragraph">
+                <p class="source-text">
+                  Shop lights appear one by one. A bus exhales at the corner,
+                  then the avenue is quiet again.
+                </p>
+                <p class="translated-text">
+                  店铺的灯一盏盏亮起。公交车在街角停靠吐息，随后长街又恢复安静。
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <div class="translation-toast" role="status" aria-live="polite">
+            <span class="toast-mark">译</span>
+            <div>
+              <strong>12 / 12 段</strong>
+              <span>DeepSeek · 简体中文</span>
+            </div>
+            <span class="toast-done">完成</span>
+          </div>
+        </div>
+
+        <a class="hero-next" href="#how">
+          <span>一键切换，接着读</span>
+          <span aria-hidden="true">↓</span>
+        </a>
+      </section>
+
+      <section class="how" id="how" data-od-id="how">
+        <div class="section-intro">
+          <p class="section-kicker">One shortcut, no detour</p>
+          <h2>不离开当前网页，<br />也不用来回复制。</h2>
+          <p>
+            原文位置、页面结构、阅读进度都不变。AI Translate 只在段落后插入译文，需要时再一键还原。
+          </p>
+        </div>
+
+        <ol class="real-steps">
+          <li>
+            <span class="step-number">01</span>
+            <div>
+              <h3>打开想读的网页</h3>
+              <p>技术文档、长文章、论坛讨论，照常浏览。</p>
+            </div>
+            <span class="step-state">保持原页面</span>
+          </li>
+          <li>
+            <span class="step-number">02</span>
+            <div>
+              <h3>按下 Alt+A</h3>
+              <p>译文出现在对应原文后，段落关系不会被打散。</p>
+            </div>
+            <kbd>Alt</kbd><span class="key-plus">+</span><kbd>A</kbd>
+          </li>
+          <li>
+            <span class="step-number">03</span>
+            <div>
+              <h3>从刚才的位置接着读</h3>
+              <p>动态加载的新内容也会继续补翻，不用重复操作。</p>
+            </div>
+            <span class="step-state is-complete">继续阅读</span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="scenes" id="scenes" data-od-id="scenes">
+        <div class="scene-copy">
+          <p class="section-kicker">Translate where you already are</p>
+          <h2>不止整页。<br />读、查、写都在原地完成。</h2>
+          <div class="scene-tabs" role="tablist" aria-label="翻译场景">
+            <button
+              id="scene-tab-select"
+              class="scene-tab is-active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="scene-panel"
+              data-scene="select"
+            >
+              划词翻译
+            </button>
+            <button
+              id="scene-tab-input"
+              class="scene-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="scene-panel"
+              tabindex="-1"
+              data-scene="input"
+            >
+              输入框翻译
+            </button>
+            <button
+              id="scene-tab-restore"
+              class="scene-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="scene-panel"
+              tabindex="-1"
+              data-scene="restore"
+            >
+              随时还原
+            </button>
+          </div>
+          <p class="scene-description" id="scene-description">
+            选中没看懂的一小段，点一下“译”浮标；也可以直接使用右键菜单。
+          </p>
+        </div>
+
+        <div
+          class="context-demo"
+          id="scene-panel"
+          role="tabpanel"
+          aria-labelledby="scene-tab-select"
+          tabindex="0"
+        >
+          <div class="context-topbar">
+            <span>github.com / discussion / 1842</span>
+            <span>原网页</span>
+          </div>
+          <div class="discussion">
+            <div class="discussion-avatar">M</div>
+            <div class="discussion-body">
+              <div class="discussion-meta">
+                <strong>maya-dev</strong>
+                <span>commented 12 min ago</span>
+              </div>
+              <p id="scene-source">
+                The edge case only appears when the request is interrupted
+                between two streamed chunks.
+              </p>
+              <mark id="selection-mark">interrupted between two streamed chunks</mark>
+              <div class="selection-badge" id="selection-badge">译</div>
+              <div class="selection-result" id="selection-result">
+                <span>简体中文</span>
+                <p>这个边缘情况只会在请求恰好中断于两个流式数据块之间时出现。</p>
+                <small>DeepSeek · 已缓存</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="reliability" data-od-id="reliability">
+        <div class="reliability-copy">
+          <p class="section-kicker">Keep reading when an engine fails</p>
+          <h2>模型临时不可用，<br />阅读不必跟着停。</h2>
+          <p>
+            你可以配置 DeepSeek、OpenAI、智谱或其他 OpenAI 兼容接口。没有配置，或 AI 请求失败时，会自动切换到 Google 免费翻译通道。
+          </p>
+        </div>
+
+        <div class="engine-path" aria-label="翻译引擎降级流程">
+          <div class="engine-line">
+            <span class="engine-dot is-active"></span>
+            <div>
+              <small>首选引擎</small>
+              <strong>DeepSeek</strong>
+            </div>
+            <span class="engine-status failed">请求超时</span>
+          </div>
+          <div class="path-connector">
+            <span>自动降级</span>
+            <i></i>
+          </div>
+          <div class="engine-line">
+            <span class="engine-dot"></span>
+            <div>
+              <small>免费通道</small>
+              <strong>Google Translate</strong>
+            </div>
+            <span class="engine-status success">继续翻译</span>
+          </div>
+          <div class="cache-note">
+            <span>本地缓存命中时</span>
+            <strong>相同内容不重复请求</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="shortcuts" data-od-id="shortcuts">
+        <p class="section-kicker">Two shortcuts worth remembering</p>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Alt</kbd><span>+</span><kbd>A</kbd></div>
+          <div>
+            <h2>翻译 / 还原当前页面</h2>
+            <p>在双语对照与原始网页之间来回切换。</p>
+          </div>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Alt</kbd><span>+</span><kbd>T</kbd></div>
+          <div>
+            <h2>翻译当前输入框</h2>
+            <p>写好内容再翻译，结果直接替换输入框原文。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="install" id="install" data-od-id="install">
+        <div class="install-heading">
+          <img src="./assets/icon-v2-128.png" width="84" height="84" alt="" />
+          <div>
+            <p class="section-kicker">Chrome MV3 · Open source</p>
+            <h2>装进浏览器，<br />下一页就开始用。</h2>
+          </div>
+        </div>
+
+        <div class="install-body">
+          <ol>
+            <li><span>1</span>从 GitHub 下载或克隆项目</li>
+            <li><span>2</span>在 Chrome 扩展页开启开发者模式</li>
+            <li><span>3</span>选择“加载已解压的扩展程序”</li>
+          </ol>
+          <div class="clone-command">
+            <code id="clone-command">git clone https://github.com/heycqing/ai-translate.git</code>
+            <button type="button" data-copy="clone-command">
+              <span class="copy-label">复制命令</span>
+            </button>
+          </div>
+          <div class="install-actions">
+            <a
+              class="primary-button"
+              href="https://github.com/heycqing/ai-translate"
+              target="_blank"
+              rel="noopener"
+            >
+              打开 GitHub <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              class="plain-link"
+              href="https://github.com/heycqing/ai-translate#readme"
+              target="_blank"
+              rel="noopener"
+            >
+              查看完整使用说明
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand" href="#top">
+        <img src="./assets/icon-v2-32.png" width="24" height="24" alt="" />
+        <span>AI Translate</span>
+      </a>
+      <p>整页双语 · 划词翻译 · 输入框翻译</p>
+      <p>Created by heycqing · v0.4.1</p>
+    </footer>
+  </body>
+</html>

@@ -2,13 +2,15 @@
 
 一个轻量的 Chrome MV3 双语网页翻译扩展。支持整页双语对照、划词/右键翻译、OpenAI 兼容模型、IndexedDB 缓存，以及 AI 接口不可用时自动降级到 Google 免费翻译。
 
-> 当前版本：`0.4.5`。M1、M2 与 M3 已完成，核心日常翻译能力可用。
+> 当前版本：`0.5.0`。M1 至 M4 已完成，核心日常翻译能力可用。
 
 ## 功能
 
 - **整页双语对照**：在原文段落后插入译文，可随时还原
 - **动态内容补翻**：自动处理无限滚动和页面新增内容
 - **网页弹窗翻译**：识别 dialog、modal、popover、drawer 等弹窗，覆盖 iframe 与 open Shadow DOM，并在弹窗打开时自动补翻
+- **广覆盖页面文本**：从可见文本节点归组翻译单元，覆盖 footer、普通 div/span、链接、按钮与 SVG `<text>`
+- **属性文本翻译**：对无可见正文的 `aria-label` 以及 `title`、`placeholder` 原位显示双语，并可完整还原
 - **自适应双语排版**：正文使用上下对照，导航、菜单和表单标签使用紧凑行内译文，减少固定高度控件中的重叠
 - **划词与右键翻译**：选中文本后点击“译”浮标，或使用右键菜单
 - **多引擎配置**：支持 DeepSeek、OpenAI、智谱及其他 OpenAI 兼容接口
@@ -77,8 +79,9 @@
 | M3 | 输入框翻译（`Alt+T`） | ✅ 已完成 |
 | M3 可选项 | Codex Responses Provider 本地代理转接 | ✅ 已完成，真实配置仅在运行时读取 |
 | M3 可选项 | 登录自启动（Windows / macOS）、设置页本地代理控制 | ✅ 已完成 |
+| M4 | iframe/open Shadow DOM 弹窗、广覆盖 DOM、SVG 与属性文本翻译 | ✅ 已完成 |
 
-当前实现已经覆盖网页阅读、选中文本和输入回复三类主要场景。下一步建议完善缓存清理与容量策略，并增加浏览器端自动化回归。
+当前实现已经覆盖网页阅读、动态弹窗、选中文本和输入回复等主要场景。下一步建议增加可选的图片/Canvas OCR 模式，并完善浏览器端自动化回归。
 
 ## 本地 Responses 代理
 
@@ -154,9 +157,11 @@ node tests/lang-codes.test.js
 node tests/local-proxy-adapter.test.js
 node tests/local-proxy-config.test.js
 node tests/local-proxy-server.test.js
+node tests/page-translate-wide.test.js
 node tests/prompt.test.js
 node tests/settings.test.js
 node tests/styles.test.js
+node tests/wide-dom-collector.test.js
 ```
 
 建议在发布改动前额外手测：长文章、包含代码块的 GitHub 页面、无限滚动页面、划词/右键入口、缓存命中、错误 Key 降级和零配置降级。
@@ -170,12 +175,14 @@ node tests/styles.test.js
 - 富文本编辑区翻译会替换为纯文本，不保留原有富文本格式。
 - 浏览器原生 `alert/confirm/prompt` 和 Chrome 自身界面不属于网页 DOM，扩展无法改写；网页实现的弹窗可以翻译。
 - 使用 closed Shadow DOM 封装且不暴露文本节点的组件受浏览器隔离限制，无法由扩展读取。
+- Canvas、WebGL、图片中的像素文字以及 CSS `::before/::after` 生成内容没有普通 DOM 文本节点，当前不会翻译；后续需使用独立 OCR 模式。
+- 复杂 SVG 的 `textPath`、变换与严格裁剪区域可能无法为追加译文提供足够空间；当前主要覆盖普通 SVG `<text>/<tspan>`。
 - 非 Windows 环境下，本地 Responses 代理仍需手动保持运行；Windows 可使用随项目提供的登录自启动安装脚本。
 - 暂未支持 PDF/EPUB、视频字幕及 Chrome 商店发布。
 
 ## 隐私说明
 
-待翻译文本会发送到当前选中的翻译服务；发生降级时会发送到 Google 免费翻译接口。Provider 配置和 API Key 保存在本机的 `chrome.storage.local` 中。
+待翻译的正文、footer、SVG 文本以及符合规则的 `aria-label`、`title`、`placeholder` 会发送到当前选中的翻译服务；发生降级时会发送到 Google 免费翻译接口。密码、验证码、Token、密钥类控件会被排除，输入框 `value` 不会被整页翻译收集。Provider 配置和 API Key 保存在本机的 `chrome.storage.local` 中。
 
 ## 作者与链接
 

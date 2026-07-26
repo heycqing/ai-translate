@@ -379,6 +379,11 @@ a:focus-visible,
   color: var(--ink);
   font-family: var(--sans);
   font-weight: 600;
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: rgba(59, 130, 246, 0.55);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
   transition:
     opacity 180ms ease,
     transform 180ms ease;

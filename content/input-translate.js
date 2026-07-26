@@ -108,7 +108,13 @@
   }
 
   chrome.runtime.onMessage.addListener(function (msg) {
-    if (msg && msg.type === 'translate-active-input') translateActiveInput();
+    if (!msg || msg.type !== 'translate-active-input') return;
+    // all_frames 开启后消息会到达所有 frame。顶层 document 的焦点若是 iframe，
+    // 由该子 frame 自己处理，避免顶层同时提示“请先聚焦输入框”。
+    const active = document.activeElement;
+    if (active && String(active.tagName).toUpperCase() === 'IFRAME') return;
+    if (!document.hasFocus()) return;
+    translateActiveInput();
   });
 
   self.AITInput = { translateActiveInput: translateActiveInput };

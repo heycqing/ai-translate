@@ -2,12 +2,14 @@
 
 一个轻量的 Chrome MV3 双语网页翻译扩展。支持整页双语对照、划词/右键翻译、OpenAI 兼容模型、IndexedDB 缓存，以及 AI 接口不可用时自动降级到 Google 免费翻译。
 
-> 当前版本：`0.4.1`。M1、M2 与 M3 已完成，核心日常翻译能力可用。
+> 当前版本：`0.4.5`。M1、M2 与 M3 已完成，核心日常翻译能力可用。
 
 ## 功能
 
 - **整页双语对照**：在原文段落后插入译文，可随时还原
 - **动态内容补翻**：自动处理无限滚动和页面新增内容
+- **网页弹窗翻译**：识别 dialog、modal、popover、drawer 等弹窗，覆盖 iframe 与 open Shadow DOM，并在弹窗打开时自动补翻
+- **自适应双语排版**：正文使用上下对照，导航、菜单和表单标签使用紧凑行内译文，减少固定高度控件中的重叠
 - **划词与右键翻译**：选中文本后点击“译”浮标，或使用右键菜单
 - **多引擎配置**：支持 DeepSeek、OpenAI、智谱及其他 OpenAI 兼容接口
 - **失败恢复**：批次失败会拆分重试，单段失败可点击重译
@@ -154,6 +156,7 @@ node tests/local-proxy-config.test.js
 node tests/local-proxy-server.test.js
 node tests/prompt.test.js
 node tests/settings.test.js
+node tests/styles.test.js
 ```
 
 建议在发布改动前额外手测：长文章、包含代码块的 GitHub 页面、无限滚动页面、划词/右键入口、缓存命中、错误 Key 降级和零配置降级。
@@ -165,6 +168,8 @@ node tests/settings.test.js
 - 缓存没有过期时间或容量上限，也没有图形化清理入口。需要清空时，可在扩展 service worker 控制台执行 `indexedDB.deleteDatabase('ai-translate-cache')`。
 - 尚无浏览器端自动化测试；当前自动测试只覆盖可独立运行的纯函数。
 - 富文本编辑区翻译会替换为纯文本，不保留原有富文本格式。
+- 浏览器原生 `alert/confirm/prompt` 和 Chrome 自身界面不属于网页 DOM，扩展无法改写；网页实现的弹窗可以翻译。
+- 使用 closed Shadow DOM 封装且不暴露文本节点的组件受浏览器隔离限制，无法由扩展读取。
 - 非 Windows 环境下，本地 Responses 代理仍需手动保持运行；Windows 可使用随项目提供的登录自启动安装脚本。
 - 暂未支持 PDF/EPUB、视频字幕及 Chrome 商店发布。
 

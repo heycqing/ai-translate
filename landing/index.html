@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="AI Translate 是一款轻量的 Chrome 双语网页翻译扩展，支持整页双语对照、划词翻译、输入框翻译和多翻译引擎。"
+      content="AI Translate 是一款轻量的 Chrome 双语网页翻译扩展，支持整页、网页弹窗、划词与输入框翻译，并为不同页面结构自适应双语排版。"
     />
     <meta name="theme-color" content="#17211f" />
     <title>AI Translate｜网页还是原来的网页，只多一层你看得懂的语言</title>
@@ -39,7 +39,7 @@
     <main id="main">
       <section class="hero" id="top" data-od-id="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Chrome extension · v0.4.1</p>
+          <p class="eyebrow">Chrome extension · v0.4.5</p>
           <h1>AI<br />Translate</h1>
           <p class="hero-line">网页还是原来的网页，<br />只多一层你看得懂的语言。</p>
           <div class="hero-actions">
@@ -152,7 +152,7 @@
             <span class="step-number">03</span>
             <div>
               <h3>从刚才的位置接着读</h3>
-              <p>动态加载的新内容也会继续补翻，不用重复操作。</p>
+              <p>动态内容和稍后打开的网页弹窗也会继续补翻，不用重复操作。</p>
             </div>
             <span class="step-state is-complete">继续阅读</span>
           </li>
@@ -186,6 +186,18 @@
               data-scene="input"
             >
               输入框翻译
+            </button>
+            <button
+              id="scene-tab-popup"
+              class="scene-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="scene-panel"
+              tabindex="-1"
+              data-scene="popup"
+            >
+              弹窗翻译
             </button>
             <button
               id="scene-tab-restore"
@@ -342,8 +354,8 @@
         <img src="./assets/icon-v2-32.png" width="24" height="24" alt="" />
         <span>AI Translate</span>
       </a>
-      <p>整页双语 · 划词翻译 · 输入框翻译</p>
-      <p>Created by heycqing · v0.4.1</p>
+      <p>整页双语 · 弹窗补翻 · 划词翻译 · 输入框翻译</p>
+      <p>Created by heycqing · v0.4.5</p>
     </footer>
   </body>
 </html>

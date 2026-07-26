@@ -16,6 +16,42 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     );
     return true; // 保持消息通道等待异步响应
   }
+  if (msg && msg.type === 'set-page-translation-state') {
+    const tab = sender && sender.tab;
+    if (!tab || typeof tab.id !== 'number') {
+      sendResponse({ ok: false });
+      return;
+    }
+    const key = 'page-translation-' + tab.id;
+    chrome.storage.session.set({
+      [key]: { active: !!msg.active, url: tab.url || '' }
+    }).then(
+      function () { sendResponse({ ok: true }); },
+      function () { sendResponse({ ok: false }); }
+    );
+    return true;
+  }
+  if (msg && msg.type === 'get-page-translation-state') {
+    const tab = sender && sender.tab;
+    if (!tab || typeof tab.id !== 'number') {
+      sendResponse({ active: false });
+      return;
+    }
+    const key = 'page-translation-' + tab.id;
+    chrome.storage.session.get(key).then(function (store) {
+      const state = store[key];
+      sendResponse({
+        active: !!(state && state.active && state.url === (tab.url || ''))
+      });
+    }, function () {
+      sendResponse({ active: false });
+    });
+    return true;
+  }
+});
+
+chrome.tabs.onRemoved.addListener(function (tabId) {
+  chrome.storage.session.remove('page-translation-' + tabId);
 });
 
 // 缓存 → AI 引擎 → 失败降级免费通道；未配置引擎直接走免费通道

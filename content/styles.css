@@ -2,12 +2,30 @@
 .ait-translation {
   display: block;
   margin-top: 6px;
+  line-height: 1.45;
   opacity: 0.92;
   text-decoration: underline;
   text-decoration-style: dashed;
   text-decoration-color: rgba(59, 130, 246, 0.55);
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
+}
+
+/* 导航、菜单、浮动表单标签等固定高度 UI：不另起一行，避免撑不开容器时文字叠压。 */
+.ait-translation.ait-translation-compact {
+  display: inline !important;
+  margin: 0 0 0 0.38em !important;
+  color: #2563eb;
+  font-size: 0.84em;
+  line-height: inherit;
+  vertical-align: baseline;
+  white-space: normal;
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: rgba(37, 99, 235, 0.65);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  opacity: 0.9;
 }
 
 .ait-failed {

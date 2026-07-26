@@ -8,6 +8,35 @@
   let toastTimer = null;
   let degradedNote = '';   // 本轮翻译是否发生了降级
 
+  function isOwnUi(node) {
+    const el = node && (node.nodeType === 1 ? node : node.parentElement);
+    return !!(el && el.closest('.ait-toast, .ait-translation, .ait-select-btn, .ait-select-card'));
+  }
+
+  function affectsPopup(target) {
+    if (!target || target.nodeType !== 1) return false;
+    const selector = self.AITCollectRules.POPUP_ROOT_SELECTOR;
+    return !!self.AITCollector.closestPopup(target) || !!target.querySelector(selector);
+  }
+
+  function setSharedTranslationState(active) {
+    chrome.runtime.sendMessage({
+      type: 'set-page-translation-state',
+      active: !!active
+    }).catch(function () {});
+  }
+
+  function observeOpenRoots() {
+    self.AITCollector.getOpenRoots(document.body).forEach(function (root) {
+      observer.observe(root, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'style', 'hidden', 'open', 'aria-hidden', 'aria-modal', 'role']
+      });
+    });
+  }
+
   function showToast(text, autohideMs) {
     clearTimeout(toastTimer);
     if (!toast) {
@@ -30,20 +59,25 @@
     observer = new MutationObserver(function (mutations) {
       const hasPageMutation = mutations.some(function (mutation) {
         const target = mutation.target.nodeType === 1 ? mutation.target : mutation.target.parentElement;
-        if (target && target.closest('.ait-toast, .ait-translation')) return false;
+        if (isOwnUi(target)) return false;
+        // 很多弹窗启动时已在 DOM 中，只通过 class/style/hidden/open/aria-hidden 切换显示。
+        // 仅关注弹窗相关节点的属性变化，避免页面动画造成无意义的全页重扫。
+        if (mutation.type === 'attributes') return affectsPopup(target);
         const changed = Array.prototype.slice.call(mutation.addedNodes)
           .concat(Array.prototype.slice.call(mutation.removedNodes));
         return changed.some(function (node) {
-          return node.nodeType !== 1 || !node.matches('.ait-toast, .ait-translation');
+          return !isOwnUi(node);
         });
       });
       if (!hasPageMutation) return;
+      // 新插入的 Web Component 可能带有新的 open shadow root，先纳入监听再补翻。
+      observeOpenRoots();
       clearTimeout(observerTimer);
       observerTimer = setTimeout(function () {
-        if (translated && !translating) translatePage();
+        if (translated && !translating) translatePage(true);
       }, 800);
     });
-    observer.observe(document.body, { childList: true, subtree: true });
+    observeOpenRoots();
   }
 
   function stopObserver() {
@@ -51,7 +85,7 @@
     clearTimeout(observerTimer);
   }
 
-  async function translatePage() {
+  async function translatePage(incremental) {
     if (translating) return;
     translating = true;
     try {
@@ -59,7 +93,12 @@
       showToast('正在收集段落…');
       const els = self.AITCollector.collectParagraphs(document.body);
       if (!els.length) {
-        showToast('没有可翻译的段落', 2000);
+        if (!incremental) {
+          // 即使当前没有正文，也保持“已开启”状态；稍后显示或插入的弹窗仍可自动补翻。
+          translated = true;
+          startObserver();
+          showToast('已开启翻译，等待可翻译内容', 2000);
+        }
         return;
       }
       const items = els.map(function (el, i) { return { id: i, text: el.innerText.trim() }; });
@@ -126,11 +165,21 @@
     }
   }
 
+  function getTranslationClassName(el, extraClass) {
+    const compact = self.AITCollector.closestInComposedTree(
+      el,
+      self.AITCollectRules.COMPACT_TRANSLATION_SELECTOR
+    );
+    return 'ait-translation' +
+      (compact ? ' ait-translation-compact' : '') +
+      (extraClass ? ' ' + extraClass : '');
+  }
+
   function insertTranslation(el, text) {
     if (el.dataset.aitDone === '1') return;
     el.dataset.aitDone = '1';
     const node = document.createElement('font');
-    node.className = 'ait-translation';
+    node.className = getTranslationClassName(el);
     node.textContent = text;
     el.appendChild(node);
   }
@@ -139,7 +188,7 @@
     if (el.dataset.aitDone === '1') return;
     el.dataset.aitDone = '1';
     const node = document.createElement('font');
-    node.className = 'ait-translation ait-failed';
+    node.className = getTranslationClassName(el, 'ait-failed');
     node.textContent = '[翻译失败，点击重试]';
     node.title = error || '';
     node.addEventListener('click', function () {
@@ -160,10 +209,22 @@
 
   chrome.runtime.onMessage.addListener(function (msg) {
     if (!msg) return;
-    if (msg.type === 'page-translate') translatePage();
-    else if (msg.type === 'page-restore') restorePage();
-    else if (msg.type === 'toggle-page-translate') { translated ? restorePage() : translatePage(); }
+    if (msg.type === 'page-translate') {
+      setSharedTranslationState(true);
+      translatePage();
+    } else if (msg.type === 'page-restore') {
+      setSharedTranslationState(false);
+      restorePage();
+    } else if (msg.type === 'toggle-page-translate') {
+      setSharedTranslationState(!translated);
+      translated ? restorePage() : translatePage();
+    }
   });
+
+  // 后创建的 iframe 不会收到用户此前发出的“翻译此页”消息，注入后主动继承当前标签页状态。
+  chrome.runtime.sendMessage({ type: 'get-page-translation-state' }).then(function (resp) {
+    if (resp && resp.active && !translated) translatePage();
+  }).catch(function () {});
 
   // 供 Task 9 的 MutationObserver 复用
   self.AITPage = { translatePage: translatePage, restorePage: restorePage, isTranslated: function () { return translated; } };

@@ -37,6 +37,17 @@ const sceneContent = {
     translation: "我已经复现了这个问题，今天下午会发一个最小示例。",
     meta: "输入框翻译 · 内容已替换",
   },
+  popup: {
+    description:
+      "页面翻译开启后，稍后出现的 dialog、modal、iframe 和 open Shadow DOM 弹窗也会自动补翻。",
+    topbar: "account.example.com / settings / region",
+    source:
+      "Your country or region determines available services and payment methods.",
+    selection: "动态弹窗",
+    badge: "窗",
+    translation: "你的国家或地区决定了可用的服务和付款方式。",
+    meta: "iframe · 自动补翻 · 紧凑排版",
+  },
   restore: {
     description: "想核对原文时再按一次 Alt+A，所有译文立即收起，网页回到原始状态。",
     topbar: "docs.example.com / guide / streaming",
